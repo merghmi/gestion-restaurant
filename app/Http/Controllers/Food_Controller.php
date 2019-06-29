@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Restaurant;
+use App\Categorie;
 use Illuminate\validation\Rule;
 use App\Food;
-
+use Illuminate\Support\Facades\Validator;
 class Food_Controller extends Controller
 {
     /**
@@ -25,8 +26,9 @@ class Food_Controller extends Controller
    
     
      public function get_categorie(Request $request){
-        $categorie_list=Categorie::Where('name_restaurant','=',$request->name_restaurant);
-         return response()->json(array($categorie_list));
+      //  return response()->json($request->all());
+        $categorie_list=Categorie::where('name_restaurant',$request->name_restaurant)->get();
+         return response()->json(($categorie_list));
     }
 
     /**
@@ -47,7 +49,26 @@ class Food_Controller extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $validat=  validator::make($request->all(), [
+             'name' => ['required', 'string', 'max:255',rule::unique('foods')->where('name',$request['name'])->where('name_restaurant', $request['name_restaurant'])],
+             'price'=>['required','regex:/^\d*(\.\d{2})?$/'],
+             'name_restaurant' =>['required','string'],
+             'name_categorie'=>['required','string'],
+          
+            
+         ]);
+        if($validat->fails()) 
+             return response()->json(array('errors' =>$validat->getMessageBag()->toarray() ));
+         else{
+            $food=new Food();
+            $food->name=$request->name;
+            $food->price=$request->price;
+            $food->name_restaurant=$request->name_restaurant;
+            $food->name_categorie=$request->name_categorie;
+            $food->image=$request->image;
+            $food->save();
+            return response()->json($food);
+         }
     }
 
     /**
@@ -67,9 +88,31 @@ class Food_Controller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+         {
+         $validat=  validator::make($request->all(), [
+             'name' => ['required', 'string', 'max:255',rule::unique('foods')->ignore($request['id'])->where('name',$request['name'])->where('name_restaurant', $request['name_restaurant'])],
+             'price'=>['required','regex:/^\d*(\.\d{2})?$/'],
+             'name_restaurant' =>['required','string'],
+             'name_categorie'=>['required','string'],
+          
+            
+         ]);
+        if($validat->fails()) 
+             return response()->json(array('errors' =>$validat->getMessageBag()->toarray() ));
+         else{
+            $food=Food::find($request['id']);
+            $food->name=$request->name;
+            $food->price=$request->price;
+            $food->name_restaurant=$request->name_restaurant;
+            $food->name_categorie=$request->name_categorie;
+            $food->image=$request->image;
+            $food->save();
+            return response()->json($food);
+         }
+    }
+
     }
 
     /**
@@ -90,8 +133,10 @@ class Food_Controller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy( Request $request)
     {
         //
+         $food=Food::find($request->id)->delete();
+       return response()->json();
     }
 }

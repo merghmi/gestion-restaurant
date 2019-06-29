@@ -36,6 +36,9 @@ Route::prefix('admin')->group(function(){
     Route::get('/',function(){
         return view('./layouts/adminview/master');
     });
+    Route::get('/login',function(){
+        return view('./layouts/adminview/login');
+    });
  Route::get('/users', 'Auth\RegisterController@index');
 
  Route::post('/users/delete','Auth\RegisterController@delete'  )->name('admin/users/delete');
@@ -55,7 +58,11 @@ Route::prefix('admin')->group(function(){
   Route::post('/categorie/edit' ,'CategorieController@update')->name('edit_categorie');
    Route::post('/categorie/delete' ,'CategorieController@destroy')->name('delete_categorie');
    Route::get('/foods' ,'Food_Controller@index')->name('get_list_foods');
-    Route::get('/foud/list' ,'Food_Controller@get_categorie')->name('get_list_categorie');
+   Route::get('/foud/list' ,'Food_Controller@get_categorie')->name('get_list_categorie');
+   Route::post('/food/add','Food_Controller@store')->name('add_food');
+   Route::post('/food/edit','Food_Controller@edit')->name('edit_food');
+   Route::post('/food/delete','Food_Controller@destroy')->name('delete_food');
+
  Route::get('/dashbord',function(){
     return view('layouts.adminview.dashborad');
  })->name('dashbord');

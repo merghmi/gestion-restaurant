@@ -44,6 +44,7 @@ class RestaurantController extends Controller
             'adress'=>['required', 'string', 'max:300'],
             'latitude' => ['required', 'string', 'min:8','max:255','unique:restaurants'],
             'longitude' => ['required', 'string', 'max:255','unique:restaurants'],
+            'file' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             
          ]);
         if($validat->fails()) 
@@ -51,9 +52,15 @@ class RestaurantController extends Controller
          else{
              $restaurant=new Restaurant();
              $restaurant->label=$request->label;
-             $restaurant->adress=$request->adress;
-             $restaurant->latitude=$request->latitude;
-             $restaurant->longitude=$request->longitude;
+                     $restaurant->adress=$request->adress;
+                     $restaurant->latitude=$request->latitude;
+                     $restaurant->longitude=$request->longitude;
+                      if($request->hasFile('file')) {
+                      $image = $request->file('file');
+                     $fileName = $image->getClientOriginalName();
+                    $restaurant->image=$fileName;
+                   $image->move(public_path('images'),$fileName);
+            }
              $restaurant->save();
              //return redirect('/admin/restaurants');
              return response()->json($restaurant);
@@ -82,8 +89,7 @@ class RestaurantController extends Controller
     public function edit($id)
     {
         //
-        $restaurant=Restaurant::find($id);
-        return  view('/layouts/adminview/EditRestaurant')->with('restaurant',$restaurant);
+      
     }
 
     /**
@@ -101,6 +107,7 @@ class RestaurantController extends Controller
             'adress'=>['required', 'string', 'max:300'],
             'latitude' => ['required', 'string', 'min:8','max:255',Rule::unique('restaurants')->ignore($id)],
             'longitude' => ['required', 'string', 'max:255',Rule::unique('restaurants')->ignore($id)],
+            'file' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
             
          ]);
         if($validat->fails())
@@ -114,6 +121,12 @@ class RestaurantController extends Controller
                      $restaurant->adress=$request->adress;
                      $restaurant->latitude=$request->latitude;
                      $restaurant->longitude=$request->longitude;
+                      if($request->hasFile('file')) {
+                      $image = $request->file('file');
+                     $fileName = $image->getClientOriginalName();
+                    $restaurant->image=$fileName;
+                   $image->move(public_path('images'),$fileName);
+            }
                      $restaurant->save();
                      //return redirect('admin/restaurants');
                      return response()->json($restaurant);

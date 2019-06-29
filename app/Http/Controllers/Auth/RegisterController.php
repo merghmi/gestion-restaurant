@@ -90,7 +90,7 @@ protected function registerAdmin(Request $request){
             'phone' => ['required', 'string', 'min:8','max:12','unique:users'],
             'adress' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'image'=>['required', 'string', 'max:255'],
+             'file' =>  'image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => ['required', 'string', 'min:6', 'confirmed'],
 
         ]);
@@ -103,19 +103,23 @@ protected function registerAdmin(Request $request){
 
     else
        {
-            $admin=User::create([
-                    'name' => $request['name'],
-                    'phone' => $request['phone'],
-                    'adress' => $request['adress'],
-                    'email' => $request['email'],
-                    'image' => $request['image'],
-                    'password' => Hash::make($request['password']),
-                    'permission'=>$request['permission'],
-                    ]);
-          
+         
+         $admin= new User();
+         $admin->name=$request['name'];
+         $admin->phone=$request['phone'];
+         $admin->adress=$request['adress'];
+         $admin->email=$request['email'];
+         if($request->hasFile('file')) {
+                $image = $request->file('file');
+                $fileName = $image->getClientOriginalName();
+                $admin->image=$fileName;
+                $image->move(public_path('images'),$fileName);
+            }
+            $admin->password=$request['password'];
+            $admin->permission=$request['permission'];
 
             $admin->save();
-           // return redirect('admin/users');
+          
       return response()->json($admin);
     }
 }
@@ -126,8 +130,7 @@ protected function index(){
  }
 
  protected function edit($id){
-  $admin=User::find($id);
-  return view('layouts.adminview.editUser' ,compact('admin'));
+ 
 
  }
  protected function update(Request  $request){
@@ -139,7 +142,7 @@ protected function index(){
             'adress' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255',Rule::unique('users')->ignore($id)
          ],
-            'image'=>['required', 'string', 'max:255'],
+            'file' =>  'image|mimes:jpeg,png,jpg,gif|max:2048',
             
 ]);
       if($validator->fails())
@@ -154,7 +157,12 @@ protected function index(){
          $user->phone=$request['phone'];
          $user->adress=$request['adress'];
          $user->email=$request['email'];
-         $user->image=$request['image'];
+         if($request->hasFile('file')) {
+                $image = $request->file('file');
+                $fileName = $image->getClientOriginalName();
+                $user->image=$fileName;
+                $image->move(public_path('images'),$fileName);
+            }
          $user->permission=$request['permission'];
          $user->save();
     

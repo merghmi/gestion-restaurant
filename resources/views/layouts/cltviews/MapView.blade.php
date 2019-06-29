@@ -1,27 +1,20 @@
 @include('./layouts/adminview/head')
-  <body>  
-    <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>Control Options</title>
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-  </head>
+ 
+
   <body>
-    <div id="map"></div>
+   
+    <div id="map">
+     <html>
+    <head>
+    <title>Laravel Google Maps Example</title>
+        {!! $map['js'] !!}
+    </head>
+<body>
+    <div class="container">
+            {!! $map['html'] !!}
+    </div>
+
+    </div>
     <script>
       // You can set control options to change the default position or style of many
       // of the map controls.
@@ -39,7 +32,7 @@
       }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDeTS6N8BDRbK7oFg1_PBWHb_XK31u4jGw&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLp9ephUey2wYOfubW92ANXt7Rk30Vx7s&callback=initMap">
     </script>
   </body>
 </html>

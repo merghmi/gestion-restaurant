@@ -18,8 +18,8 @@
 				          </div>
 
 			          <div class="modal-body  modal-body-restaurant">
-			            <form method="POST" action="" class="form-horizontal form-add-restaurant">
-			             	 @csrf
+			            <form method="POST" action="" class="form-horizontal form-add-restaurant" id="upload_form" name="upload_form">
+			             	 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 							 <div class="form-group row form-label">
 		                            <label for="label" class="col-md-4 col-form-label text-md-right">{{ __('Label') }}</label>
 
@@ -72,6 +72,33 @@
 		                              
 		                            </div>
 		                        </div>
+		                        <div class="form-group row image">
+                            <label for="image" class="col-md-4 col-form-label text-md-right">
+                            {{ __('Image') }}</label>
+
+                            <div class="col-md-5">
+                                 <div class="input-group"> 
+                                  <input type="file" name="file" id="file" accept="image/*" class="hidden">
+                                    <input type="text" class="form-control" placeholder="ajouter image" disabled="true" id="image_rest" name="image_rest"> 
+                                    <span class="input-group-btn">
+                                        <a  name="add_image" id="add_image" class="btn btn-flat form-control " 
+                                        onclick="document.getElementById('file').click();return false;"><strong><i class="glyphicon glyphicon-picture"></i></strong>
+                                        </a>
+                                    </span>
+                                  </div>
+                                   <script type="text/javascript">
+                   $(document).ready(function(){
+                          $('input[type="file"]').change(function(e){
+                              var fileName = e.target.files[0].name;
+                              $('#image_rest').val(fileName);
+                              
+                      });
+                        });
+                              
+                         </script>          
+                               
+                            </div>
+         </div>
 		                </form>
 		                <div class="modal-footer">       
 				              <div class="form-group action-modal">
@@ -122,10 +149,18 @@
 	    </div>
 	 </div>
  	<hr>
- 	<script src="{{ asset('adminLTE/js/jquery-2.2.3.min.js')}}"></script>
+ 	
  	<script type="text/javascript">
  		
  		$(document).on('click','.create-restaurant',function(){
+ 			$('.invalid-feedback').text('');
+ 						$('#label').val("");
+ 					     $('#adress').val("");
+ 					     $('#latitude').val("");
+ 					   $('#longitude').val("");
+ 					   $('#image_rest').val('');
+ 			if(('.id-rest-edit').length)
+ 		    	$('.id-rest-edit').remove();
  			if(('.action-button-rest').length)
  			$('.action-button-rest').remove();
  			$('.create_modal_form-restaurant').modal('show');
@@ -133,21 +168,19 @@
  			$('.action-modal').append('<button type="submit"'+
            ' class="btn btn-primary pull-right action-button-rest" name="btnadd" id="bntadd" onclick="addRestaurant()">'+
                                         'Add  Restaurant<i class="fa fa-plus"></i> </button>');
-
+            
 
  		});
  		function addRestaurant(){
+ 			var my_form=document.getElementById('upload_form'); 
+ 			var v=new FormData(my_form)	;		
  			$.ajax({
  				type:'POST',
  				url:'{{route("ajout_restaurant")}}',
  				dataType:'json',
- 				data:{
- 					 '_token': $('meta[name="csrf-token"]').attr('content'),
- 					 'label':$('#label').val(),
- 					 'adress':$('#adress').val(),
- 					 'latitude':$('#latitude').val(),
- 					 'longitude':$('#longitude').val(),
- 				},
+ 				contentType: false,
+      			processData: false,
+      			data:v,
  				success:function(data){
  					if(data.errors){
  						if(data.errors.hasOwnProperty('label'))
@@ -161,7 +194,7 @@
  					}
  					else{
 	                               
- 						$('#table').append('<tr class="bg-info res'+data.id+'">'+data.id+'<td class="text-center"><td class="text-center">'+data.label +'</td><td class="text-center">'+data.adress +'</td><td class="text-center">'+data.latitude +'</td>	<td class="text-center">'+data.longitude+'</td><td><a href="" class="btn btn-xs btn-success btn-edit" data-id="'+data.id+'" data-label="'          +data.label+'"  data-adress="'         +data.adress+'"   data-latitude="'   +data.latitude+'" data-longitude="'    +data.longitude+'"><span class="fa fa-edit"></span></a>  </td> <td><a  class="btn btn-xs btn-danger pull-right btn-delete" data-id="'+data. id+'" data-label="'+data.label+
+ 						$('#table').append('<tr class="bg-info res'+data.id+'"><td class="text-center">'+data.id+'</td><td class="text-center">'+data.label +'</td><td class="text-center">'+data.adress +'</td><td class="text-center">'+data.latitude +'</td>	<td class="text-center">'+data.longitude+'</td><td><a href="" class="btn btn-xs btn-success btn-edit" data-id="'+data.id+'" data-label="'          +data.label+'"  data-adress="'         +data.adress+'"   data-latitude="'   +data.latitude+'" data-longitude="'    +data.longitude+'" data-image="'+data.image+'"><span class="fa fa-edit"></span></a>  </td> <td><a  class="btn btn-xs btn-danger pull-right btn-delete" data-id="'+data. id+'" data-label="'+data.label+
  							
  			'"><span class="fa fa-trash"></span></a></td></tr>');
 
@@ -170,6 +203,7 @@
  					     $('#adress').val("");
  					     $('#latitude').val("");
  					   $('#longitude').val("");
+ 					   $('#image_rest').val('');
 
 
  					}
@@ -200,22 +234,21 @@
  			 $('#adress').val($(this).data('adress'));
  			 $('#latitude').val($(this).data('latitude'));
  			 $('#longitude').val($(this).data('longitude'));
+ 			 $('#image_rest').val($(this).data('image'));
 
 
  		});
  			 function edit_Restaurant(){
+ 			 	var my_form=document.getElementById('upload_form'); 
+ 			var v=new FormData(my_form)	;
+ 			v.append('id',$('#id_rest_edit').val());
  			$.ajax({
  				type:'POST',
  				url:'{{ route ("edit_restaurant") }}',
  				dataType:'json',
- 				data:{
- 					 '_token': $('meta[name="csrf-token"]').attr('content'),
- 					 'id':  $('#id_rest_edit').val(),
- 					 'label':$('#label').val(),
- 					 'adress':$('#adress').val(),
- 					 'latitude':$('#latitude').val(),
- 					 'longitude':$('#longitude').val(),
- 				},
+ 				contentType: false,
+     		    processData: false,
+ 				data:v,
  				success:function(data){
  					if(data.errors){
  						if(data.errors.hasOwnProperty('label'))
@@ -229,7 +262,7 @@
  					}
  					else{
 	                               
- 						$('.res'+data.id).replaceWith('<tr class="bg-info res'+data.id+'">'+data.id+'<td class="text-center"><td class="text-center">'+data.label +'</td><td class="text-center">'+data.adress +'</td><td class="text-center">'+data.latitude +'</td>	<td class="text-center">'+data.longitude+'</td><td><a  class="btn btn-xs btn-success btn-edit" data-id="'+data.id+'" data-label="'          +data.label+'"  data-adress="'         +data.adress+'"   data-latitude="'   +data.latitude+'" data-longitude="'    +data.longitude+'"><span class="fa fa-edit"></span></a>  </td> <td><a  class="btn btn-xs btn-danger pull-right btn-delete" data-id="'+data. id+'" data-label="'+data.label+
+ 						$('.res'+data.id).replaceWith('<tr class="bg-info res'+data.id+'"><td class="text-center">'+data.id+'</td><td class="text-center">'+data.label +'</td><td class="text-center">'+data.adress +'</td><td class="text-center">'+data.latitude +'</td>	<td class="text-center">'+data.longitude+'</td><td><a  class="btn btn-xs btn-success btn-edit" data-id="'+data.id+'" data-label="'          +data.label+'"  data-adress="'         +data.adress+'"   data-latitude="'   +data.latitude+'" data-longitude="'    +data.longitude+'" data-image="'+data.image+'"><span class="fa fa-edit"></span></a>  </td> <td><a  class="btn btn-xs btn-danger pull-right btn-delete" data-id="'+data. id+'" data-label="'+data.label+
  							
  			'"><span class="fa fa-trash"></span></a></td></tr>');
 
@@ -296,7 +329,7 @@
 								<td class="text-center">{{ $rest->longitude }}</td>
 
 								<td>
-									<a  class="btn btn-xs btn-success btn-edit" data-id="{{ $rest->id}}" data-label="{{ $rest->label}}" data-adress="{{ $rest->adress}}" data-latitude="{{$rest->latitude}}" data-longitude="{{$rest->longitude}}"><span class="fa fa-edit"></span></a>
+									<a  class="btn btn-xs btn-success btn-edit" data-id="{{ $rest->id}}" data-label="{{ $rest->label}}" data-adress="{{ $rest->adress}}" data-latitude="{{$rest->latitude}}" data-longitude="{{$rest->longitude}}" data-image="{{$rest->image}}"><span class="fa fa-edit"></span></a>
 	                              </td>
 	                              <td>  
 	                                <a  class="btn btn-xs btn-danger pull-right btn-delete" data-id="{{$rest->id}}" data-label="{{$rest->label}}"><span class="fa fa-trash"></span></a>

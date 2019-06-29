@@ -1,7 +1,7 @@
 @extends('./layouts/adminview/master')
 @section('content')
 <br>
- <script src="{{ asset('adminLTE/plugins/jQuery/jquery-2.2.3.min.js')}}"></script>
+
 <div class="row">
 	<div class="card-tools"> 
        <div class="row">
@@ -43,8 +43,8 @@
 			          </div>
 
 			          <div class="modal-body  modal-body-admin">
-			             <form method="POST" action="" class="form-horizontal form-add">
-                       
+			              <form method="post" accept="multipart/form-data" action="" id="upload_form" name="upload_form">
+                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                         <div class="form-group row name">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
@@ -103,7 +103,7 @@
                             <div class="col-md-6">
                                 <div class="input-group"> 
                                   <input type="file" name="file" id="file" accept="image/*" class="hidden">
-                                    <input type="text" class="form-control" placeholder="ajouter image" id="image" name="image" onclick="document.getElementById('file').click();return false;"> 
+                                    <input type="text" class="form-control" placeholder="ajouter image" id="image" name="image" disabled=""> 
                                     <span class="input-group-btn">
                                         <a  name="add_image" id="add_image" class="btn btn-default form-control " 
                                         onclick="document.getElementById('file').click();return false;"><strong><i class="glyphicon glyphicon-picture "></i></strong>
@@ -119,7 +119,7 @@
                           $('input[type="file"]').change(function(e){
                               var fileName = e.target.files[0].name;
                               $('#image').val(fileName);
-                              $('#image').prop('disabled','true');
+                              
                       });
                         });
                   </script>
@@ -279,23 +279,21 @@
   });
   
   function addUser(){
+    var my_form=document.getElementById('upload_form');
+    var v=new FormData(my_form);
+    for(var value of v.keys())
+      console.log(value);
     $.ajax({
       type:'POST',
       url:"{{route('admin/users/addadmin')}}",
       dataType:'json',
-      data:{
-         '_token': $('meta[name="csrf-token"]').attr('content'),
-        'name': $('#name').val(),
-        'phone': $('#phone').val(),
-        'adress': $('#adress').val(),
-        'email': $('#email').val(),
-        'image':  $('#image').val(),
-        'password':  $('#password').val(),
-        'password_confirmation': $('#password_confirmation').val(),
-        'permission': $('#permission').val(),
+      contentType: false,
+      processData: false,
+      data:v,
+      
         
 
-      },
+      
       success: function(data){
         
        if((data.errors)){
@@ -379,7 +377,7 @@
        } );
 
 function deleteUser(){
-    
+
    $.ajax({
      type:'post',
      url:"{{ route('admin/users/delete')}}",
@@ -429,29 +427,24 @@ function deleteUser(){
      });
 
     function editUser(){
-      
+       var my_form=document.getElementById('upload_form');
+      var v=new FormData(my_form);
+      v.append('id',$('#id_user_edit').val());
+      for(var value of v.values())
+        console.log(value);
     $.ajax({
       type:'POST',
       url:"{{route('admin/users/editUser')}}",
       dataType:'json',
-      data:{
-         '_token': $('meta[name="csrf-token"]').attr('content'),
-        'id'        : $('#id_user_edit').val(),
-        'name'      : $('#name').val(),
-        'phone'     : $('#phone').val(),
-        'adress'    : $('#adress').val(),
-        'email'     : $('#email').val(),
-        'image'     : $('#image').val(),
-        'permission': $('#permission').val(),
-        
-
-      },
+      contentType: false,
+      processData: false,
+      data:v,
       success: function(data){
         
        if((data.errors)){
         console.log(data);
        
-          // $('.invalid-feedback').removeClass('hidden');
+          
            if(data.errors.hasOwnProperty("name"))
             $('.name-error').html("<strong class='text-danger'>"
               +data.errors.name[0]+"</strong>");

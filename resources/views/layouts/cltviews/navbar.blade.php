@@ -31,6 +31,12 @@
       </div>
     </li>
   </ul>
+  <form class="navbar-form" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
   <ul class="navbar-nav ml-auto nav-flex-icons">
   @if (Route::has('login'))
   

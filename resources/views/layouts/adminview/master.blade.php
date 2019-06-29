@@ -1,8 +1,8 @@
-@extends('./layouts/adminview/head')
+@include('./layouts/adminview/head')
   
 <!--
 BODY TAG OPTIONS:
-=================
+=================            
 Apply one or more of the following classes to get the
 desired effect
 |---------------------------------------------------------|
