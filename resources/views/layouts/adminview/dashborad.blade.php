@@ -35,7 +35,7 @@
               <!-- /.row -->
             </div>
             <!-- /.box-footer -->
-  <script src="{{ asset('adminLTE/js/jquery-2.2.3.min.js')}}"></script>
+ <script src="{{ asset('adminLTE/js/jquery-3.1.1.min.js')}}"></script>
 <script src="{{asset('adminLTE/plugins/chartjs/Chart.min.js')}}"></script>
 
 

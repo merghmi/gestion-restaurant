@@ -122,7 +122,7 @@
 	    </div>
 	 </div>
  	<hr>
- 	<script src="{{ asset('adminLTE/js/jquery-2.2.3.min.js')}}"></script>
+ 	 <script src="{{ asset('adminLTE/js/jquery-3.1.1.min.js')}}"></script>
  	<script type="text/javascript">
  		
  		$(document).on('click','.create-restaurant',function(){

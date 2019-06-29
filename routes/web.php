@@ -55,7 +55,9 @@ Route::prefix('admin')->group(function(){
   Route::post('/categorie/edit' ,'CategorieController@update')->name('edit_categorie');
    Route::post('/categorie/delete' ,'CategorieController@destroy')->name('delete_categorie');
    Route::get('/foods' ,'Food_Controller@index')->name('get_list_foods');
-    Route::get('/foud/list' ,'Food_Controller@get_categorie')->name('get_list_categorie');
+   Route::get('/foud/list' ,'Food_Controller@get_categorie')->name('get_list_categorie');
+   Route::post('/food/add','Food_Controller@store')->name('add_food');
+
  Route::get('/dashbord',function(){
     return view('layouts.adminview.dashborad');
  })->name('dashbord');

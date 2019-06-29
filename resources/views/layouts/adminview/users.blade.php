@@ -1,7 +1,7 @@
 @extends('./layouts/adminview/master')
 @section('content')
 <br>
- <script src="{{ asset('adminLTE/plugins/jQuery/jquery-2.2.3.min.js')}}"></script>
+ <script src="{{ asset('adminLTE/js/jquery-3.1.1.min.js')}}"></script>
 <div class="row">
 	<div class="card-tools"> 
        <div class="row">

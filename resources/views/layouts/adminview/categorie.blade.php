@@ -119,7 +119,7 @@ tbody {
   </div>
 </div>
 <!-- add image function-->
-<script src="{{ asset('adminLTE/plugins/jQuery/jquery-2.2.3.min.js')}}"></script>
+ <script src="{{ asset('adminLTE/js/jquery-3.1.1.min.js')}}"></script>
 <script type="text/javascript">
  $(document).ready(function(){
         $('input[type="file"]').change(function(e){
